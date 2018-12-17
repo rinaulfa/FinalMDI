@@ -1,0 +1,25 @@
+import pyodbc
+import matplotlib.pyplot as plt
+import pandas as pd
+import calendar
+
+con = pyodbc.connect('Trusted_Connection=yes', driver = '{SQL Server}',server = 'DESKTOP-23O9V1Q', database='db_final')
+cursor = con.cursor()
+sqlselect = ("select (MONTH (tanggal)) as Bulan, count (MONTH (tanggal)) as Jumlah from MHS where (YEAR (tanggal)) = 2018 group by month(tanggal) order by month(tanggal)")
+
+cursor.execute(sqlselect)
+results = cursor.fetchall()
+print (results)
+
+df=pd.DataFrame([ij for ij in i] for i in results)
+df.rename(columns={0: 'Bulan', 1:'Jumlah'}, inplace = True)
+print (df)
+df['Bulan'] = df['Bulan'].apply(lambda x: calendar.month_abbr[x])
+x=df['Bulan']
+y=df['Jumlah']
+plt.bar(x,y)
+plt.title('Jumlah Last Access Share ITS Mahasiswa pada Tahun 2018')
+plt.xlabel('Bulan')
+plt.ylabel('Jumlah Last Access')
+plt.show()
+

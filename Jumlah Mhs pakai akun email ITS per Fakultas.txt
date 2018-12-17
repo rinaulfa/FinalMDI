@@ -1,0 +1,23 @@
+import pyodbc
+import matplotlib.pyplot as plt
+import pandas as pd
+
+con = pyodbc.connect('Trusted_Connection=yes', driver = '{SQL Server}',server = 'DESKTOP-23O9V1Q', database='db_final')
+cursor = con.cursor()
+sqlselect = ("select Fakultas, count(Distinct Mahasiswa) as JumlahMahasiswa from MHS where Email like '%its.ac.id' group by Fakultas")
+
+cursor.execute(sqlselect)
+results = cursor.fetchall()
+print (results)
+
+df=pd.DataFrame([ij for ij in i] for i in results)
+df.rename(columns={0: 'Fakultas', 1:'Jumlah'}, inplace = True)
+print (df)
+x=df['Fakultas']
+y=df['Jumlah']
+plt.barh(x,y)
+plt.title('Jumlah Mahasiswa per Fakultas dengan Email ITS')
+plt.xlabel('Jumlah Mahasiswa')
+plt.ylabel('Fakultas')
+plt.show()
+

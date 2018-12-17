@@ -1,0 +1,23 @@
+import pyodbc
+import matplotlib.pyplot as plt
+import pandas as pd
+
+con = pyodbc.connect('Trusted_Connection=yes', driver = '{SQL Server}',server = 'DESKTOP-23O9V1Q', database='db_final')
+cursor = con.cursor()
+sqlselect = ("select Jurusan, count(Mahasiswa) as Jumlah from MHS where (YEAR (tanggal)) = 2018  AND (DATENAME (month, tanggal)) = 'November' group by Jurusan")
+
+cursor.execute(sqlselect)
+results = cursor.fetchall()
+print (results)
+
+df=pd.DataFrame([ij for ij in i] for i in results)
+df.rename(columns={0: 'Tahun', 1:'Jumlah'}, inplace = True)
+print (df)
+x=df['Tahun']
+y=df['Jumlah']
+plt.barh(x,y)
+plt.title('Jumlah Last Access Share ITS Mahasiswa di bulan November 2018 per Mata Kuliah')
+plt.xlabel('Jumlah Last Access')
+plt.ylabel('Jurusan')
+plt.show()
+
